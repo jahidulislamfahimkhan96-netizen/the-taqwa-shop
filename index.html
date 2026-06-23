@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পোশাক অর্ডার ফর্ম</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: #1e3c72; margin-bottom: 25px; font-size: 24px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e4e6; border-radius: 8px; font-size: 15px; background-color: #fff; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #007bff; }
+        
+        .radio-group { display: flex; gap: 15px; margin-top: 5px; }
+        .radio-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .radio-item input { width: auto; margin: 0; }
+        
+        button { width: 100%; padding: 14px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        /* সফল মেসেজ বক্স */
+        .success-box { display: none; text-align: center; padding: 30px 20px; border-radius: 8px; font-size: 20px; font-weight: bold; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 id="formTitle">পোশাক অর্ডার ফর্ম</h2>
+    
+    <form id="orderForm">
+        <div class="form-group">
+            <label for="userName">আপনার নাম:</label>
+            <input type="text" id="userName" placeholder="পূর্ণ নাম লিখুন" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="userPhone">মোবাইল নম্বর (ইংরেজিতে):</label>
+            <input type="tel" id="userPhone" placeholder="017XXXXXXXX" required>
+        </div>
+        
+        <div class="form-group">
+            <label>এই নাম্বারে আপনার কি আছে?</label>
+            <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="appType" value="WhatsApp" checked> WhatsApp</label>
+                <label class="radio-item"><input type="radio" name="appType" value="Imo"> Imo</label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="productType">কি অর্ডার করতে চান?</label>
+            <select id="productType" required>
+                <option value="" disabled selected>বাছাই করুন...</option>
+                <option value="গেঞ্জি / T-Shirt">গেঞ্জি / T-Shirt</option>
+                <option value="শার্ট / Shirt">শার্ট / Shirt</option>
+                <option value="প্যান্ট / Pant">প্যান্ট / Pant</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="productSize">সাইজ (Size):</label>
+            <select id="productSize" required>
+                <option value="" disabled selected>সাইজ বাছাই করুন...</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="productQty">পরিমাণ (কত পিস?):</label>
+            <input type="number" id="productQty" value="1" min="1" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="userAddress">ডেলিভারি ঠিকানা:</label>
+            <textarea id="userAddress" placeholder="গ্রাম/রোড, থানা, জেলা লিখুন..." rows="3" required></textarea>
+        </div>
+        
+        <button type="submit" id="submitBtn">অর্ডার কনফার্ম করুন</button>
+    </form>
+
+    <div id="successBox" class="success-box">
+        ✅ আপনার ফর্মটি সফলভাবে সাবমিট হয়েছে
+    </div>
+</div>
+
+<script>
+    // আপনার দেওয়া বটের আসল টোকেন এবং চ্যাট আইডি
+    const BOT_TOKEN = "8900197927:AAEnwA_V0oUJqmm0bg3LflthuUGdlzco6dQ";
+    const CHAT_ID = "8860505763";
+
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('orderForm');
+        const successBox = document.getElementById('successBox');
+        
+        submitBtn.disabled = true;
+        submitBtn.innerText = "সাবমিট হচ্ছে...";
+
+        // ফর্ম থেকে ডেটা নেওয়া
+        const name = document.getElementById('userName').value;
+        let phone = document.getElementById('userPhone').value.trim();
+        const appType = document.querySelector('input[name="appType"]:checked').value;
+        const product = document.getElementById('productType').value;
+        const size = document.getElementById('productSize').value;
+        const qty = document.getElementById('productQty').value;
+        const address = document.getElementById('userAddress').value;
+
+        // নাম্বারের শুরুতে ইন্টারন্যাশনাল কোড (88) না থাকলে তা যোগ করার নিয়ম (লিংক কাজ করার জন্য)
+        if (!phone.startsWith('88')) {
+            if (phone.startsWith('0')) {
+                phone = '88' + phone;
+            } else {
+                phone = '880' + phone;
+            }
+        }
+
+        // টেলিগ্রাম মেসেজ টেক্সট ফরম্যাট
+        const messageText = `🛍️ **নতুন অর্ডার এসেছে!**\n\n👤 **নাম:** ${name}\n📞 **মোবাইল:** ${phone.replace('88', '0')}\n📱 **যোগাযোগের মাধ্যম:** ${appType}\n📦 **প্রোডাক্ট:** ${product}\n📏 **সাইজ:** ${size}\n🔢 **পরিমাণ:** ${qty} পিস\n📍 **ঠিকানা:** ${address}`;
+
+        // কাস্টমারের অ্যাপ চয়েস অনুযায়ী বটের ভেতরের বাটন ডাইনামিকালি সেট হবে
+        let actionURL = "";
+        let buttonText = "";
+
+        if (appType === "WhatsApp") {
+            actionURL = `https://wa.me/${phone}`;
+            buttonText = "💬 WhatsApp-এ মেসেজ দিন";
+        } else {
+            // ইমুতে সরাসরি ডাইরেক্ট চ্যাট লিংক অফিসিয়ালি না থাকায় টেলিগ্রাম থেকে ইমু অ্যাপে রিডাইরেক্ট করা হয়
+            actionURL = `https://imo.im/s/d/bangladesh/${phone.replace('88', '')}`;
+            buttonText = "📱 Imo-তে মেসেজ দিন";
+        }
+
+        const inlineKeyboard = {
+            inline_keyboard: [
+                [
+                    { text: buttonText, url: actionURL }
+                ]
+            ]
+        };
+
+        // টেলিগ্রাম এপিআই-তে মেসেজ ও বাটন পাঠানো হচ্ছে
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: messageText,
+                reply_markup: inlineKeyboard
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.ok) {
+                // ফর্ম সম্পূর্ণ হাইড করে দেওয়া হবে
+                form.style.display = 'none';
+                document.getElementById('formTitle').style.display = 'none';
+                
+                // শুধুমাত্র আপনার দেওয়া কাঙ্ক্ষিত সাকসেস মেসেজটি আসবে
+                successBox.style.display = 'block';
+            } else {
+                alert("অর্ডার সাবমিট হয়নি। অনুগ্রহ করে আপনার টেলিগ্রাম বটে গিয়ে একবার /start লিখে মেসেজ দিন।");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "অর্ডার কনফার্ম করুন";
+            }
+        })
+        .catch(err => {
+            alert("নেটওয়ার্ক সমস্যা! আবার চেষ্টা করুন।");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "অর্ডার কনফার্ম করুন";
+        });
+    });
+</script>
+
+</body>
+</html>
