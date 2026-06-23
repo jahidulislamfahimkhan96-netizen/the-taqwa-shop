@@ -12,17 +12,14 @@
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #94a3b8; font-size: 14px; }
         input, textarea, select { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 14px; }
-        input:focus, textarea:focus { outline: none; border-color: #38bdf8; }
         .btn-save { width: 100%; padding: 14px; background: #0ea5e9; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-save:hover { background: #0284c7; }
         .status-group { background: #1e293b; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
         #loginSection { text-align: center; margin-top: 50px; }
-        .hint { font-size: 12px; color: #64748b; margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
-<!-- 🔐 লগইন সেকশন -->
 <div id="loginSection" class="admin-box">
     <h2>🔒 এডমিন লগইন</h2>
     <div class="form-group">
@@ -32,11 +29,9 @@
     <button class="btn-save" onclick="checkLogin()">প্রবেশ করুন</button>
 </div>
 
-<!-- 🛠️ আসল এডমিন প্যানেল -->
 <div id="mainAdmin" class="admin-box" style="display: none;">
-    <h2>🛠️ কন্ট্রোল প্যানেল</h2>
+    <h2>🛠️ কন্ট্রোল প্যানেল (লাইভ)</h2>
     
-    <!-- শপ স্ট্যাটাস -->
     <div class="status-group">
         <span>🏪 শপ স্ট্যাটাস:</span>
         <select id="shopStatus">
@@ -45,7 +40,6 @@
         </select>
     </div>
 
-    <!-- লাইভ চ্যাট বাটন -->
     <div class="status-group">
         <span>💬 লাইভ চ্যাট বাটন:</span>
         <select id="chatStatus">
@@ -54,64 +48,81 @@
         </select>
     </div>
 
-    <!-- টাকার অ্যামাউন্ট বা দাম সেট করা -->
     <div class="form-group">
         <label>💰 জার্সির মূল্য বা দাম (টাকা):</label>
-        <input type="number" id="jerseyPrice" placeholder="যেমন: ৪৫০">
-        <span class="hint">এখানে যে দাম লিখবেন, কাস্টমার ফর্মে সেই দাম ও মোট হিসাব দেখাবে।</span>
+        <input type="number" id="jerseyPrice">
     </div>
 
-    <!-- সাইজ এডিট করা -->
     <div class="form-group">
         <label>📏 সাইজের তালিকা (কমা ',' দিয়ে লিখুন):</label>
         <input type="text" id="jerseySizes">
-        <span class="hint">যেমন: M, L, XL, XXL</span>
     </div>
 
-    <!-- জার্সির নাম এডিট করা -->
     <div class="form-group">
         <label>👕 জার্সির তালিকা (কমা ',' দিয়ে লিখুন):</label>
         <textarea id="jerseyList" rows="5"></textarea>
-        <span class="hint">প্রতিটি জার্সির নামের পর একটি কমা (,) দিন।</span>
     </div>
 
-    <button class="btn-save" onclick="saveData()">💾 Costume করুন ও সেভ দিন</button>
+    <button class="btn-save" id="saveBtn" onclick="saveData()">💾 লাইভ আপডেট করুন</button>
 </div>
 
 <script>
-    const CORRECT_PASSWORD = "1234"; // আপনার অ্যাডমিন পাসওয়ার্ড
+    const CORRECT_PASSWORD = "1234"; 
+    const DB_URL = "https://api.jsonbin.io/v3/b/6678da47ad19ca34f87e59b9"; 
+    const DB_KEY = "$2a$10$R9hZqbyFf0lE3/aXyX1ySuo4L.S6mGfMHeZ9h8E5bKkY1fA/f99.i";
 
     function checkLogin() {
-        const pass = document.getElementById('adminPass').value;
-        if(pass === CORRECT_PASSWORD) {
+        if(document.getElementById('adminPass').value === CORRECT_PASSWORD) {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('mainAdmin').style.display = 'block';
             loadCurrentSettings();
         } else {
-            alert("❌ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
+            alert("❌ ভুল পাসওয়ার্ড!");
         }
     }
 
     function loadCurrentSettings() {
-        document.getElementById('shopStatus').value = localStorage.getItem('shopStatus') || 'open';
-        document.getElementById('chatStatus').value = localStorage.getItem('chatStatus') || 'show';
-        document.getElementById('jerseyPrice').value = localStorage.getItem('jerseyPrice') || '450';
-        document.getElementById('jerseySizes').value = localStorage.getItem('jerseySizes') || 'M, L, XL, XXL';
-        
-        const defaultJerseys = "বাংলাদেশ অফিসিয়াল জার্সি, বাংলাদেশ প্র্যাকটিস জার্সি, আর্জেন্টিনা জার্সি, ব্রাজিল জার্সি, রিয়াল মাদ্রিদ জার্সি, বার্সেলোনা জার্সি";
-        document.getElementById('jerseyList').value = localStorage.getItem('jerseyList') || defaultJerseys;
+        fetch(DB_URL + "/latest", { headers: { "X-Master-Key": DB_KEY } })
+        .then(res => res.json())
+        .then(resData => {
+            const data = resData.record;
+            document.getElementById('shopStatus').value = data.shopStatus || 'open';
+            document.getElementById('chatStatus').value = data.chatStatus || 'show';
+            document.getElementById('jerseyPrice').value = data.jerseyPrice || '450';
+            document.getElementById('jerseySizes').value = data.jerseySizes || 'M, L, XL, XXL';
+            document.getElementById('jerseyList').value = data.jerseyList;
+        });
     }
 
     function saveData() {
-        localStorage.setItem('shopStatus', document.getElementById('shopStatus').value);
-        localStorage.setItem('chatStatus', document.getElementById('chatStatus').value);
-        localStorage.setItem('jerseyPrice', document.getElementById('jerseyPrice').value);
-        localStorage.setItem('jerseySizes', document.getElementById('jerseySizes').value);
-        localStorage.setItem('jerseyList', document.getElementById('jerseyList').value);
-        
-        alert("🎯 অভিনন্দন! দাম, সাইজ এবং জার্সির তালিকা কাস্টমার প্যানেলে আপডেট হয়ে গেছে।");
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.innerText = "আপডেট হচ্ছে...";
+        saveBtn.disabled = true;
+
+        const updatedData = {
+            shopStatus: document.getElementById('shopStatus').value,
+            chatStatus: document.getElementById('chatStatus').value,
+            jerseyPrice: document.getElementById('jerseyPrice').value,
+            jerseySizes: document.getElementById('jerseySizes').value,
+            jerseyList: document.getElementById('jerseyList').value
+        };
+
+        fetch(DB_URL, {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json", "X-Master-Key": DB_KEY },
+            body: JSON.stringify(updatedData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            saveBtn.innerText = "💾 লাইভ আপডেট করুন";
+            saveBtn.disabled = false;
+            alert("🎯 ম্যাজিক! এবার যেকোনো ফোন থেকেই কাস্টমার আপনার নতুন দাম ও সেটিংস দেখতে পাবে।");
+        })
+        .catch(err => {
+            alert("সমস্যা হয়েছে! আবার চেষ্টা করুন।");
+            saveBtn.disabled = false;
+        });
     }
 </script>
-
 </body>
 </html>
