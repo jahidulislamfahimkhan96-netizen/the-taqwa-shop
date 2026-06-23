@@ -32,7 +32,7 @@
     <button class="btn-save" onclick="checkLogin()">প্রবেশ করুন</button>
 </div>
 
-<!-- 🛠️ আসল এডমিন প্যানেল (লগইন ছাড়া হাইড থাকবে) -->
+<!-- 🛠️ আসল এডমিন প্যানেল -->
 <div id="mainAdmin" class="admin-box" style="display: none;">
     <h2>🛠️ কন্ট্রোল প্যানেল</h2>
     
@@ -58,7 +58,7 @@
     <div class="form-group">
         <label>💰 জার্সির মূল্য বা দাম (টাকা):</label>
         <input type="number" id="jerseyPrice" placeholder="যেমন: ৪৫০">
-        <span class="hint">এখানে যা লিখবেন কাস্টমার ফর্মে সেই দাম দেখতে পাবে।</span>
+        <span class="hint">এখানে যে দাম লিখবেন, কাস্টমার ফর্মে সেই দাম ও মোট হিসাব দেখাবে।</span>
     </div>
 
     <!-- সাইজ এডিট করা -->
@@ -75,7 +75,7 @@
         <span class="hint">প্রতিটি জার্সির নামের পর একটি কমা (,) দিন।</span>
     </div>
 
-    <button class="btn-save" onclick="saveData()">💾 সবকিছু আপডেট করুন</button>
+    <button class="btn-save" onclick="saveData()">💾 Costume করুন ও সেভ দিন</button>
 </div>
 
 <script>
@@ -109,59 +109,9 @@
         localStorage.setItem('jerseySizes', document.getElementById('jerseySizes').value);
         localStorage.setItem('jerseyList', document.getElementById('jerseyList').value);
         
-        alert("🎯 অভিনন্দন! কাস্টমার প্যানেলে দাম, সাইজ এবং জার্সির তালিকা আপডেট হয়ে গেছে।");
+        alert("🎯 অভিনন্দন! দাম, সাইজ এবং জার্সির তালিকা কাস্টমার প্যানেলে আপডেট হয়ে গেছে।");
     }
 </script>
 
-</body>
-</html>        // সাইজ লোড
-        const sSelect = document.getElementById('productSize');
-        sSelect.innerHTML = '<option value="" disabled selected>সাইজ বাছাই করুন...</option>';
-        sizes.forEach(s => { if(s.trim()) sSelect.innerHTML += `<option value="${s.trim()}">${s.trim()}</option>`; });
-    };
-
-    document.getElementById('orderForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.innerText = "সাবমিট হচ্ছে...";
-
-        const name = document.getElementById('userName').value;
-        let phone = document.getElementById('userPhone').value.trim();
-        const appType = document.querySelector('input[name="appType"]:checked').value;
-        const product = document.getElementById('productType').value;
-        const size = document.getElementById('productSize').value;
-        const qty = document.getElementById('productQty').value;
-        const address = document.getElementById('userAddress').value;
-        const price = localStorage.getItem('jerseyPrice') || '450';
-
-        if (!phone.startsWith('88')) { phone = phone.startsWith('0') ? '88' + phone : '880' + phone; }
-
-        const totalCost = parseInt(price) * parseInt(qty);
-        const messageText = `👕 **নতুন জার্সির অর্ডার এসেছে!**\n\n👤 **নাম:** ${name}\n📞 **মোবাইল:** ${phone.replace('88', '0')}\n📱 **মাধ্যম:** ${appType}\n⚽ **জার্সি:** ${product}\n📏 **সাইজ:** ${size}\n🔢 **পরিমাণ:** ${qty} পিস\n💰 **মোট মূল্য:** ${totalCost} টাকা\n📍 **ঠিকানা:** ${address}`;
-
-        let actionURL = (appType === "WhatsApp") ? `https://wa.me/${phone}` : `https://imo.im/s/d/bangladesh/${phone.replace('88', '')}`;
-        let buttonText = (appType === "WhatsApp") ? "💬 WhatsApp-এ মেসেজ দিন" : "📱 Imo-তে মেসেজ দিন";
-
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: messageText, reply_markup: { inline_keyboard: [[{ text: buttonText, url: actionURL }]] } })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.ok) {
-                document.getElementById('orderForm').style.display = 'none';
-                document.getElementById('chatBox').style.display = 'none';
-                document.getElementById('priceDisplay').style.display = 'none';
-                document.getElementById('formTitle').style.display = 'none';
-                document.getElementById('successBox').style.display = 'block';
-            } else {
-                alert("ত্রুটি হয়েছে! আবার চেষ্টা করুন।");
-                submitBtn.disabled = false;
-            }
-        });
-    });
-</script>
 </body>
 </html>
