@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>পোশাক অর্ডার ফর্ম</title>
+    <title>জার্সি অর্ডার ফর্ম</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: #1e3c72; margin-bottom: 25px; font-size: 24px; }
+        h2 { text-align: center; color: #1e3c72; margin-bottom: 20px; font-size: 24px; }
+        
+        /* লাইভ চ্যাট সেকশন */
+        .live-chat-box { background-color: #e3fafc; border: 1px solid #99e9f2; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 14px; }
+        .live-chat-box a { color: #0b7285; text-decoration: none; display: inline-block; margin-left: 5px; background: #22b8cf; color: white; padding: 4px 10px; border-radius: 4px; font-size: 13px; }
+        .live-chat-box a:hover { background: #15aabf; }
+
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e4e6; border-radius: 8px; font-size: 15px; background-color: #fff; }
@@ -22,14 +28,17 @@
         button:hover { background-color: #0056b3; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
         
-        /* সফল মেসেজ বক্স */
         .success-box { display: none; text-align: center; padding: 30px 20px; border-radius: 8px; font-size: 20px; font-weight: bold; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 id="formTitle">পোশাক অর্ডার ফর্ম</h2>
+    <h2 id="formTitle">জার্সি অর্ডার ফর্ম</h2>
+    
+    <div id="chatBox" class="live-chat-box">
+        📞 সরাসরি লাইভ চ্যাট করতে চাইলে <a href="https://wa.me/8801966923096" target="_blank">এই লিঙ্কে ক্লিক করুন</a>
+    </div>
     
     <form id="orderForm">
         <div class="form-group">
@@ -51,12 +60,16 @@
         </div>
         
         <div class="form-group">
-            <label for="productType">কি অর্ডার করতে চান?</label>
+            <label for="productType">আপনি কোন জার্সি অর্ডার করতে চাচ্ছেন?</label>
             <select id="productType" required>
-                <option value="" disabled selected>বাছাই করুন...</option>
-                <option value="গেঞ্জি / T-Shirt">গেঞ্জি / T-Shirt</option>
-                <option value="শার্ট / Shirt">শার্ট / Shirt</option>
-                <option value="প্যান্ট / Pant">প্যান্ট / Pant</option>
+                <option value="" disabled selected>জার্সি বাছাই করুন...</option>
+                <option value="বাংলাদেশ অফিসিয়াল জার্সি (BD Official)">বাংলাদেশ অফিসিয়াল জার্সি</option>
+                <option value="বাংলাদেশ প্র্যাকটিস জার্সি (BD Practice)">বাংলাদেশ প্র্যাকটিস জার্সি</option>
+                <option value="আর্জেন্টিনা জার্সি (Argentina)">আর্জেন্টিনা জার্সি</option>
+                <option value="ব্রাজিল জার্সি (Brazil)">ব্রাজিল জার্সি</option>
+                <option value="রিয়াল মাদ্রিদ জার্সি (Real Madrid)">রিয়াল মাদ্রিদ জার্সি</option>
+                <option value="বার্সেলোনা জার্সি (Barcelona)">বার্সেলোনা জার্সি</option>
+                <option value="অন্যান্য (Other)">অন্যান্য জার্সি (বিস্তারিত ঠিকানায় লিখুন)</option>
             </select>
         </div>
         
@@ -77,7 +90,7 @@
         </div>
         
         <div class="form-group">
-            <label for="userAddress">ডেলিভারি ঠিকানা:</label>
+            <label for="userAddress">ডেলিভারি ঠিকানা ও জার্সি সংক্রান্ত অতিরিক্ত তথ্য (যদি থাকে):</label>
             <textarea id="userAddress" placeholder="গ্রাম/রোড, থানা, জেলা লিখুন..." rows="3" required></textarea>
         </div>
         
@@ -99,6 +112,7 @@
         
         const submitBtn = document.getElementById('submitBtn');
         const form = document.getElementById('orderForm');
+        const chatBox = document.getElementById('chatBox');
         const successBox = document.getElementById('successBox');
         
         submitBtn.disabled = true;
@@ -113,7 +127,7 @@
         const qty = document.getElementById('productQty').value;
         const address = document.getElementById('userAddress').value;
 
-        // নাম্বারের শুরুতে ইন্টারন্যাশনাল কোড (88) না থাকলে তা যোগ করার নিয়ম (লিংক কাজ করার জন্য)
+        // নাম্বারের শুরুতে ইন্টারন্যাশনাল কোড (88) যোগ করা
         if (!phone.startsWith('88')) {
             if (phone.startsWith('0')) {
                 phone = '88' + phone;
@@ -122,10 +136,10 @@
             }
         }
 
-        // টেলিগ্রাম মেসেজ টেক্সট ফরম্যাট
-        const messageText = `🛍️ **নতুন অর্ডার এসেছে!**\n\n👤 **নাম:** ${name}\n📞 **মোবাইল:** ${phone.replace('88', '0')}\n📱 **যোগাযোগের মাধ্যম:** ${appType}\n📦 **প্রোডাক্ট:** ${product}\n📏 **সাইজ:** ${size}\n🔢 **পরিমাণ:** ${qty} পিস\n📍 **ঠিকানা:** ${address}`;
+        // টেলিগ্রাম মেসেজ টেক্সট ফরম্যাট (বটে জার্সি শো করবে)
+        const messageText = `👕 **নতুন জার্সির অর্ডার এসেছে!**\n\n👤 **নাম:** ${name}\n📞 **মোবাইল:** ${phone.replace('88', '0')}\n📱 **যোগাযোগের মাধ্যম:** ${appType}\n⚽ **জার্সি:** ${product}\n📏 **সাইজ:** ${size}\n🔢 **পরিমাণ:** ${qty} পিস\n📍 **ঠিকানা:** ${address}`;
 
-        // কাস্টমারের অ্যাপ চয়েস অনুযায়ী বটের ভেতরের বাটন ডাইনামিকালি সেট হবে
+        // কাস্টমারের চয়েস অনুযায়ী বটের ভেতরের বাটন ডাইনামিকালি সেট হবে
         let actionURL = "";
         let buttonText = "";
 
@@ -133,7 +147,6 @@
             actionURL = `https://wa.me/${phone}`;
             buttonText = "💬 WhatsApp-এ মেসেজ দিন";
         } else {
-            // ইমুতে সরাসরি ডাইরেক্ট চ্যাট লিংক অফিসিয়ালি না থাকায় টেলিগ্রাম থেকে ইমু অ্যাপে রিডাইরেক্ট করা হয়
             actionURL = `https://imo.im/s/d/bangladesh/${phone.replace('88', '')}`;
             buttonText = "📱 Imo-তে মেসেজ দিন";
         }
@@ -159,11 +172,10 @@
         .then(res => res.json())
         .then(data => {
             if(data.ok) {
-                // ফর্ম সম্পূর্ণ হাইড করে দেওয়া হবে
+                // সাবমিট সফল হলে সবকিছু হাইড করে শুধু সাকসেস মেসেজ দেখাবে
                 form.style.display = 'none';
+                chatBox.style.display = 'none';
                 document.getElementById('formTitle').style.display = 'none';
-                
-                // শুধুমাত্র আপনার দেওয়া কাঙ্ক্ষিত সাকসেস মেসেজটি আসবে
                 successBox.style.display = 'block';
             } else {
                 alert("অর্ডার সাবমিট হয়নি। অনুগ্রহ করে আপনার টেলিগ্রাম বটে গিয়ে একবার /start লিখে মেসেজ দিন।");
