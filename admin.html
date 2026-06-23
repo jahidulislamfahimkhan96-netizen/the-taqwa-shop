@@ -3,117 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Taqwa Shop - জার্সি অর্ডার ফর্ম</title>
+    <title>The Taqwa Shop - এডমিন প্যানেল</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: #1e3c72; margin-bottom: 5px; font-size: 24px; }
-        .price-tag { text-align: center; color: #e03131; font-weight: bold; font-size: 18px; margin-bottom: 20px; background: #fff5f5; padding: 5px; border-radius: 6px; display: inline-block; width: 100%; }
-        .live-chat-box { background-color: #e3fafc; border: 1px solid #99e9f2; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 14px; }
-        .live-chat-box a { color: #0b7285; text-decoration: none; display: inline-block; margin-left: 5px; background: #22b8cf; color: white; padding: 4px 10px; border-radius: 4px; font-size: 13px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e4e6; border-radius: 8px; font-size: 15px; }
-        .radio-group { display: flex; gap: 15px; margin-top: 5px; }
-        .radio-item { display: flex; align-items: center; gap: 5px; }
-        button { width: 100%; padding: 14px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #0056b3; }
-        .success-box { display: none; text-align: center; padding: 30px 20px; border-radius: 8px; font-size: 20px; font-weight: bold; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
-        .shop-closed-box { display: none; text-align: center; padding: 30px 20px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        body { background-color: #1e293b; color: #f8fafc; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
+        .admin-box { background: #0f172a; width: 100%; max-width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 1px solid #334155; height: fit-content; }
+        h2 { text-align: center; color: #38bdf8; margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #94a3b8; font-size: 14px; }
+        input, textarea, select { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 14px; }
+        input:focus, textarea:focus { outline: none; border-color: #38bdf8; }
+        .btn-save { width: 100%; padding: 14px; background: #0ea5e9; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-save:hover { background: #0284c7; }
+        .status-group { background: #1e293b; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
+        #loginSection { text-align: center; margin-top: 50px; }
+        .hint { font-size: 12px; color: #64748b; margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2 id="formTitle">জার্সি অর্ডার ফর্ম</h2>
-    <div id="priceDisplay" class="price-tag">💰 মূল্য: <span id="currentPrice">৪৫০</span> টাকা</div>
+<!-- 🔐 লগইন সেকশন -->
+<div id="loginSection" class="admin-box">
+    <h2>🔒 এডমিন লগইন</h2>
+    <div class="form-group">
+        <label>গোপন পাসওয়ার্ড দিন:</label>
+        <input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন">
+    </div>
+    <button class="btn-save" onclick="checkLogin()">প্রবেশ করুন</button>
+</div>
+
+<!-- 🛠️ আসল এডমিন প্যানেল (লগইন ছাড়া হাইড থাকবে) -->
+<div id="mainAdmin" class="admin-box" style="display: none;">
+    <h2>🛠️ কন্ট্রোল প্যানেল</h2>
     
-    <div id="chatBox" class="live-chat-box">
-        📞 সরাসরি লাইভ চ্যাট করতে চাইলে <a href="https://wa.me/8801966923096" target="_blank">এই লিঙ্কে ক্লিক করুন</a>
+    <!-- শপ স্ট্যাটাস -->
+    <div class="status-group">
+        <span>🏪 শপ স্ট্যাটাস:</span>
+        <select id="shopStatus">
+            <option value="open">✅ চালু (Open)</option>
+            <option value="closed">❌ বন্ধ (Closed)</option>
+        </select>
     </div>
 
-    <div id="shopClosedBox" class="shop-closed-box">
-        ❌ দুঃখিত! আমাদের শপ সাময়িকভাবে বন্ধ আছে। খুব শীঘ্রই আবার অর্ডার নেওয়া শুরু হবে।
+    <!-- লাইভ চ্যাট বাটন -->
+    <div class="status-group">
+        <span>💬 লাইভ চ্যাট বাটন:</span>
+        <select id="chatStatus">
+            <option value="show">👁️ দেখান (Show)</option>
+            <option value="hide">🙈 লুকান (Hide)</option>
+        </select>
     </div>
-    
-    <form id="orderForm">
-        <div class="form-group">
-            <label for="userName">আপনার নাম:</label>
-            <input type="text" id="userName" placeholder="পূর্ণ নাম লিখুন" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="userPhone">মোবাইল নম্বর (ইংরেজিতে):</label>
-            <input type="tel" id="userPhone" placeholder="017XXXXXXXX" required>
-        </div>
-        
-        <div class="form-group">
-            <label>এই নাম্বারে আপনার কি আছে?</label>
-            <div class="radio-group">
-                <label class="radio-item"><input type="radio" name="appType" value="WhatsApp" checked> WhatsApp</label>
-                <label class="radio-item"><input type="radio" name="appType" value="Imo"> Imo</label>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="productType">আপনি কোন জার্সি অর্ডার করতে চাচ্ছেন?</label>
-            <select id="productType" required></select>
-        </div>
-        
-        <div class="form-group">
-            <label for="productSize">সাইজ (Size):</label>
-            <select id="productSize" required></select>
-        </div>
-        
-        <div class="form-group">
-            <label for="productQty">পরিমাণ (কত পিস?):</label>
-            <input type="number" id="productQty" value="1" min="1" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="userAddress">ডেলিভারি ঠিকানা:</label>
-            <textarea id="userAddress" placeholder="গ্রাম/রোড, থানা, জেলা লিখুন..." rows="3" required></textarea>
-        </div>
-        
-        <button type="submit" id="submitBtn">অর্ডার কনফার্ম করুন</button>
-    </form>
 
-    <div id="successBox" class="success-box">
-        ✅ আপনার ফর্মটি সফলভাবে সাবমিট হয়েছে
+    <!-- টাকার অ্যামাউন্ট বা দাম সেট করা -->
+    <div class="form-group">
+        <label>💰 জার্সির মূল্য বা দাম (টাকা):</label>
+        <input type="number" id="jerseyPrice" placeholder="যেমন: ৪৫০">
+        <span class="hint">এখানে যা লিখবেন কাস্টমার ফর্মে সেই দাম দেখতে পাবে।</span>
     </div>
+
+    <!-- সাইজ এডিট করা -->
+    <div class="form-group">
+        <label>📏 সাইজের তালিকা (কমা ',' দিয়ে লিখুন):</label>
+        <input type="text" id="jerseySizes">
+        <span class="hint">যেমন: M, L, XL, XXL</span>
+    </div>
+
+    <!-- জার্সির নাম এডিট করা -->
+    <div class="form-group">
+        <label>👕 জার্সির তালিকা (কমা ',' দিয়ে লিখুন):</label>
+        <textarea id="jerseyList" rows="5"></textarea>
+        <span class="hint">প্রতিটি জার্সির নামের পর একটি কমা (,) দিন।</span>
+    </div>
+
+    <button class="btn-save" onclick="saveData()">💾 সবকিছু আপডেট করুন</button>
 </div>
 
 <script>
-    const BOT_TOKEN = "8900197927:AAEnwA_V0oUJqmm0bg3LflthuUGdlzco6dQ";
-    const CHAT_ID = "8860505763";
+    const CORRECT_PASSWORD = "1234"; // আপনার অ্যাডমিন পাসওয়ার্ড
 
-    window.onload = function() {
-        const shopStatus = localStorage.getItem('shopStatus') || 'open';
-        const chatStatus = localStorage.getItem('chatStatus') || 'show';
-        const price = localStorage.getItem('jerseyPrice') || '450';
-        const sizes = (localStorage.getItem('jerseySizes') || 'M, L, XL, XXL').split(',');
-        const jerseys = (localStorage.getItem('jerseyList') || "বাংলাদেশ অফিসিয়াল জার্সি, আর্জেন্টিনা জার্সি, ব্রাজিল জার্সি").split(',');
-
-        // দাম আপডেট
-        document.getElementById('currentPrice').innerText = price;
-
-        // শপ স্ট্যাটাস চেক
-        if(shopStatus === 'closed') {
-            document.getElementById('orderForm').style.display = 'none';
-            document.getElementById('priceDisplay').style.display = 'none';
-            document.getElementById('shopClosedBox').style.display = 'block';
+    function checkLogin() {
+        const pass = document.getElementById('adminPass').value;
+        if(pass === CORRECT_PASSWORD) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainAdmin').style.display = 'block';
+            loadCurrentSettings();
+        } else {
+            alert("❌ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
         }
+    }
 
-        // চ্যাট বক্স চেক
-        if(chatStatus === 'hide') document.getElementById('chatBox').style.display = 'none';
+    function loadCurrentSettings() {
+        document.getElementById('shopStatus').value = localStorage.getItem('shopStatus') || 'open';
+        document.getElementById('chatStatus').value = localStorage.getItem('chatStatus') || 'show';
+        document.getElementById('jerseyPrice').value = localStorage.getItem('jerseyPrice') || '450';
+        document.getElementById('jerseySizes').value = localStorage.getItem('jerseySizes') || 'M, L, XL, XXL';
+        
+        const defaultJerseys = "বাংলাদেশ অফিসিয়াল জার্সি, বাংলাদেশ প্র্যাকটিস জার্সি, আর্জেন্টিনা জার্সি, ব্রাজিল জার্সি, রিয়াল মাদ্রিদ জার্সি, বার্সেলোনা জার্সি";
+        document.getElementById('jerseyList').value = localStorage.getItem('jerseyList') || defaultJerseys;
+    }
 
-        // জার্সি লোড
-        const pSelect = document.getElementById('productType');
-        pSelect.innerHTML = '<option value="" disabled selected>জার্সি বাছাই করুন...</option>';
-        jerseys.forEach(j => { if(j.trim()) pSelect.innerHTML += `<option value="${j.trim()}">${j.trim()}</option>`; });
+    function saveData() {
+        localStorage.setItem('shopStatus', document.getElementById('shopStatus').value);
+        localStorage.setItem('chatStatus', document.getElementById('chatStatus').value);
+        localStorage.setItem('jerseyPrice', document.getElementById('jerseyPrice').value);
+        localStorage.setItem('jerseySizes', document.getElementById('jerseySizes').value);
+        localStorage.setItem('jerseyList', document.getElementById('jerseyList').value);
+        
+        alert("🎯 অভিনন্দন! কাস্টমার প্যানেলে দাম, সাইজ এবং জার্সির তালিকা আপডেট হয়ে গেছে।");
+    }
+</script>
 
-        // সাইজ লোড
+</body>
+</html>        // সাইজ লোড
         const sSelect = document.getElementById('productSize');
         sSelect.innerHTML = '<option value="" disabled selected>সাইজ বাছাই করুন...</option>';
         sizes.forEach(s => { if(s.trim()) sSelect.innerHTML += `<option value="${s.trim()}">${s.trim()}</option>`; });
